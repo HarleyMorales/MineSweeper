@@ -9,18 +9,26 @@ const port = 5000;
 app.use(cors());
 app.use(bodyParser.json());
 
+// Serve static files from the React app
 app.use(express.static(path.join(__dirname, '../client/build')));
 
-let board = createBoard(10, 10, 20);
+let board = createBoard(16, 16, 40);
 
 app.get('/board', (req, res) => {
+  board = createBoard(16, 16, 40);
   res.json(board);
 });
 
 app.post('/click', (req, res) => {
   const { row, col } = req.body;
-  board = handleCellClick(board, row, col);
-  res.json(board);
+  const result = handleCellClick(board, row, col);
+  if (result.gameOver) {
+    board = result.board; // Update the board state to reflect game over
+    res.json({ board: result.board, gameOver: true });
+  } else {
+    board = result.board;
+    res.json({ board: result.board, gameOver: false });
+  }
 });
 
 app.get('*', (req, res) => {
@@ -68,14 +76,15 @@ function createBoard(rows, cols, mines) {
 }
 
 function handleCellClick(board, row, col) {
-  if (board[row][col].revealed) return board;
+  if (board[row][col].revealed) return { board, gameOver: false };
   board[row][col].revealed = true;
   if (board[row][col].mine) {
     console.log('Game Over');
+    return { board, gameOver: true };
   } else if (board[row][col].adjacentMines === 0) {
     revealAdjacentCells(board, row, col);
   }
-  return board;
+  return { board, gameOver: false };
 }
 
 function revealAdjacentCells(board, row, col) {

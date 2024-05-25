@@ -1,9 +1,11 @@
 .App {
   text-align: center;
+  font-family: Arial, sans-serif;
 }
 
 .board {
   display: inline-block;
+  margin-top: 20px;
 }
 
 .row {
@@ -18,8 +20,24 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  background-color: #ccc;
 }
 
 .cell.revealed {
-  background-color: #ddd;
+  background-color: #eee;
+}
+
+.cell.mine {
+  background-color: red;
+  color: white;
+}
+
+.cell.mine.revealed {
+  background-color: darkred;
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
 }
